@@ -1,0 +1,10 @@
+{{- if .personal }}
+[[ssh-keys]]
+vault = "SSH agent"
+{{- else }}
+[[ssh-keys]]
+vault = "Work"
+
+[[ssh-keys]]
+vault = "SSH agent"
+{{- end }}

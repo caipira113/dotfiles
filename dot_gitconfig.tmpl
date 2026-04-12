@@ -15,8 +15,14 @@
 [gpg "ssh"]
 {{- if eq .chezmoi.os "darwin" }}
 	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
-{{- else if contains "WSL" .chezmoi.kernel.osrelease }}
+{{- else if eq .chezmoi.os "windows" }}
+	program = op-ssh-sign.exe
+{{- else if eq .chezmoi.os "linux" }}
+{{-   if contains "WSL" .chezmoi.kernel.osrelease }}
 	program = op-ssh-sign-wsl.exe
+{{-   else }}
+	program = /opt/1Password/op-ssh-sign
+{{-   end }}
 {{- else }}
 	program = /opt/1Password/op-ssh-sign
 {{- end }}
@@ -26,8 +32,10 @@
 
 [core]
 	autocrlf = input
-{{- if contains "WSL" .chezmoi.kernel.osrelease }}
+{{- if eq .chezmoi.os "linux" }}
+{{-   if contains "WSL" .chezmoi.kernel.osrelease }}
 	sshCommand = ssh.exe
+{{-   end }}
 {{- end }}
 
 [commit]

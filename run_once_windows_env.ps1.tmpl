@@ -1,0 +1,6 @@
+{{ if eq .chezmoi.os "windows" -}}
+$xdgConfig = [System.Environment]::GetEnvironmentVariable('XDG_CONFIG_HOME', 'User')
+if (-not $xdgConfig) {
+    [System.Environment]::SetEnvironmentVariable('XDG_CONFIG_HOME', "$HOME\.config", 'User')
+}
+{{ end -}}

@@ -4,7 +4,11 @@ bat = "latest"
 btop = "latest"
 bun = "latest"
 chezmoi = "latest"
+{{ if and (eq .chezmoi.os "windows") (eq .chezmoi.arch "arm64") -}}
+"github:schollz/croc" = { version = "latest", asset_pattern = "croc_*_Windows-ARM64.zip" }
+{{- else -}}
 croc = "latest"
+{{- end }}
 deno = "latest"
 eza = "latest"
 fd = "latest"

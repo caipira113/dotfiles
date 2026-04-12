@@ -1,3 +1,15 @@
 LICENSE
 README.md
 **/README.md
+.gitattributes
+
+{{ if eq .chezmoi.os "windows" }}
+.zshrc
+.config/1Password
+.config/distrobox
+.local/bin/dev
+{{ end }}
+
+{{ if ne .chezmoi.os "windows" }}
+AppData
+{{ end }}
