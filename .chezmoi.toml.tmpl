@@ -5,8 +5,15 @@
 {{-   $workEmail = promptStringOnce . "work_email" "Work email address" -}}
 {{-   $workSigningKeyItem = promptStringOnce . "work_signing_key_item" "1Password item name for work SSH signing key" -}}
 {{- end -}}
+{{- $opAccount := promptStringOnce . "op_account" "1Password account UUID (leave blank if single account)" -}}
 
 [data]
   personal = {{ $personal }}
   work_email = {{ $workEmail | quote }}
   work_signing_key_item = {{ $workSigningKeyItem | quote }}
+
+[onepassword]
+  prompt = false
+{{- if $opAccount }}
+  args = ["--account", {{ $opAccount | quote }}]
+{{- end }}
