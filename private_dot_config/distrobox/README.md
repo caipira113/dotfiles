@@ -15,7 +15,7 @@ Debian Trixie container for builds that need system-level libraries. The host us
 
 ## What's inside
 
-APT mirror set to JAIST (Japan).
+APT mirror set to SAKURA internet (Japan).
 
 - build-essential, pkg-config
 - libssl-dev, libicu-dev, libreadline-dev, zlib1g-dev

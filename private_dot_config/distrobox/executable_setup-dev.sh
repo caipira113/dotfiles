@@ -13,10 +13,10 @@ SETUP_NVIDIA="${SETUP_NVIDIA:-0}"
 SETUP_CURSOR="${SETUP_CURSOR:-0}"
 
 # ═══════════════════════════════════════════════════════════════════
-#  APT mirror → JAIST (Japan)
+#  APT mirror → SAKURA internet (Japan)
 # ═══════════════════════════════════════════════════════════════════
 sudo sed -i \
-  -e 's|URIs: http://deb.debian.org/debian$|URIs: http://ftp.jaist.ac.jp/pub/Linux/debian|' \
+  -e 's|URIs: http://deb.debian.org/debian$|URIs: http://debian-mirror.sakura.ne.jp/debian|' \
   /etc/apt/sources.list.d/debian.sources
 
 sudo install -m 0755 -d /etc/apt/keyrings
