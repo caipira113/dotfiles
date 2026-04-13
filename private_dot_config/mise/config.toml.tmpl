@@ -1,3 +1,9 @@
+{{ if ne .chezmoi.os "windows" -}}
+[plugins]
+clang-format = "https://github.com/mise-plugins/mise-llvm.git"
+clangd = "https://github.com/mise-plugins/mise-llvm.git"
+{{ end -}}
+
 [tools]
 aws = { version = "latest", symlink_bins = "true" }
 bat = "latest"
@@ -28,8 +34,15 @@ python = "3.12"
 rclone = "latest"
 ripgrep = "latest"
 rust = "latest"
+sccache = "latest"
 starship = "latest"
 tmux = "latest"
 upx = "latest"
 uv = "latest"
 yt-dlp = { version = "latest", rename_exe = "yt-dlp" }
+{{ if ne .chezmoi.os "windows" -}}
+cmake = "latest"
+ninja = "latest"
+clang-format = "latest"
+clangd = "latest"
+{{- end }}
