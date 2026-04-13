@@ -76,6 +76,7 @@ done
 PACKAGES=(
   build-essential
   pkg-config
+  git
   libssl-dev
   libicu-dev
   libreadline-dev
@@ -91,6 +92,11 @@ PACKAGES=(
   gdb
   libglfw3-dev
   libgl-dev
+  libxinerama-dev
+  libxcursor-dev
+  libxrandr-dev
+  libxi-dev
+  libgtk-3-dev
   aria2
   zstd
   socat
@@ -118,6 +124,7 @@ fi
 sudo "$EMSDK_DIR/emsdk" install latest
 sudo "$EMSDK_DIR/emsdk" activate latest
 sudo chmod -R a+rX "$EMSDK_DIR"
+sudo chmod -R a+rw "$EMSDK_DIR/upstream/emscripten/cache"
 
 # ═══════════════════════════════════════════════════════════════════
 #  jellyfin-ffmpeg (latest release, arch-aware) + symlink
