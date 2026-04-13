@@ -108,7 +108,6 @@ sudo apt install -y "${PACKAGES[@]}"
 #  Emscripten SDK (system-level, activate manually when needed)
 # ═══════════════════════════════════════════════════════════════════
 EMSDK_DIR="/opt/emsdk"
-EMSDK_VERSION="3.1.74"
 
 if [ ! -d "$EMSDK_DIR" ]; then
   sudo git clone https://github.com/emscripten-core/emsdk.git "$EMSDK_DIR"
@@ -116,8 +115,8 @@ else
   sudo git -C "$EMSDK_DIR" pull
 fi
 
-sudo "$EMSDK_DIR/emsdk" install "$EMSDK_VERSION"
-sudo "$EMSDK_DIR/emsdk" activate "$EMSDK_VERSION"
+sudo "$EMSDK_DIR/emsdk" install latest
+sudo "$EMSDK_DIR/emsdk" activate latest
 sudo chmod -R a+rX "$EMSDK_DIR"
 
 # ═══════════════════════════════════════════════════════════════════
