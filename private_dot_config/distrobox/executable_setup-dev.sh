@@ -139,4 +139,14 @@ sudo ln -sf /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg
 sudo ln -sf /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
 
 # ═══════════════════════════════════════════════════════════════════
+#  1Password SSH signing wrapper (delegates to host via distrobox-host-exec)
+# ═══════════════════════════════════════════════════════════════════
+sudo mkdir -p /opt/1Password
+sudo tee /opt/1Password/op-ssh-sign > /dev/null <<'WRAPPER'
+#!/bin/sh
+exec /usr/bin/distrobox-host-exec /opt/1Password/op-ssh-sign "$@"
+WRAPPER
+sudo chmod +x /opt/1Password/op-ssh-sign
+
+# ═══════════════════════════════════════════════════════════════════
 sudo touch /etc/distrobox-setup-done
