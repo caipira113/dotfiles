@@ -6,9 +6,19 @@ clangd = "https://github.com/mise-plugins/mise-llvm.git"
 
 [tools]
 aws = { version = "latest", symlink_bins = "true" }
+{{ if and (eq .chezmoi.os "windows") (eq .chezmoi.arch "arm64") -}}
+"github:sharkdp/bat" = { version = "latest", asset_pattern = "bat-*-aarch64-pc-windows-msvc.zip" }
+{{- else -}}
 bat = "latest"
-btop = "latest"
+{{- end }}
+{{ if ne .chezmoi.os "windows" -}}
+btop = "latest" {{/* TODO: no Windows ARM64 binary available */}}
+{{- end }}
+{{ if and (eq .chezmoi.os "windows") (eq .chezmoi.arch "arm64") -}}
+"github:oven-sh/bun" = { version = "latest", asset_pattern = "bun-windows-aarch64.zip" }
+{{- else -}}
 bun = "latest"
+{{- end }}
 chezmoi = "latest"
 {{ if and (eq .chezmoi.os "windows") (eq .chezmoi.arch "arm64") -}}
 "github:schollz/croc" = { version = "latest", asset_pattern = "croc_*_Windows-ARM64.zip" }
@@ -24,22 +34,38 @@ gh = "latest"
 git-lfs = "latest"
 go = "latest"
 helm = "latest"
+{{ if and (eq .chezmoi.os "windows") (eq .chezmoi.arch "arm64") -}}
+"cargo:hexyl" = "latest"
+{{- else -}}
 hexyl = "latest"
+{{- end }}
 java = "zulu-21"
 kubectl = "latest"
 lazygit = "latest"
 neovim = "latest"
 node = "lts"
+{{ if and (eq .chezmoi.os "windows") (eq .chezmoi.arch "arm64") -}}
+"cargo:oha" = "latest"
+{{- else -}}
 oha = "latest"
+{{- end }}
 python = "3.12"
 rclone = "latest"
+{{ if and (eq .chezmoi.os "windows") (eq .chezmoi.arch "arm64") -}}
+"github:BurntSushi/ripgrep" = { version = "latest", asset_pattern = "ripgrep-*-aarch64-pc-windows-msvc.zip" }
+{{- else -}}
 ripgrep = "latest"
+{{- end }}
 rust = "latest"
 sccache = "latest"
 starship = "latest"
 tmux = "latest"
-upx = "latest"
+upx = "latest" {{/* TODO: no Windows ARM64 binary available */}}
+{{ if and (eq .chezmoi.os "windows") (eq .chezmoi.arch "arm64") -}}
+"github:astral-sh/uv" = { version = "latest", asset_pattern = "uv-aarch64-pc-windows-msvc.zip" }
+{{- else -}}
 uv = "latest"
+{{- end }}
 yt-dlp = { version = "latest", rename_exe = "yt-dlp" }
 {{ if ne .chezmoi.os "windows" -}}
 cmake = "latest"
