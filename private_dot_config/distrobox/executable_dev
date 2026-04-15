@@ -2,8 +2,20 @@
 set -euo pipefail
 
 CONTAINER_NAME="dev-debian-trixie"
-IMAGE="debian:trixie"
-SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+IMAGE="ghcr.io/caipiralink/dotfiles/dev"
+
+resolve_tag() {
+  local nvidia=$1 cursor=$2
+  if [ "$nvidia" = "1" ] && [ "$cursor" = "1" ]; then
+    echo "nvidia-cursor"
+  elif [ "$nvidia" = "1" ]; then
+    echo "nvidia"
+  elif [ "$cursor" = "1" ]; then
+    echo "cursor"
+  else
+    echo "latest"
+  fi
+}
 
 cmd_install() {
   local nvidia=0 cursor=0
@@ -16,8 +28,11 @@ cmd_install() {
     esac
   done
 
+  local tag
+  tag=$(resolve_tag "$nvidia" "$cursor")
+
   local flags=(
-    --image "$IMAGE"
+    --image "${IMAGE}:${tag}"
     --name "$CONTAINER_NAME"
     --no-entry
     --pull
@@ -25,13 +40,8 @@ cmd_install() {
 
   [ "$nvidia" = "1" ] && flags+=(--nvidia)
 
-  flags+=(
-    --init-hooks
-    "[ -f /etc/distrobox-setup-done ] || SETUP_NVIDIA=$nvidia SETUP_CURSOR=$cursor bash $SCRIPT_DIR/setup-dev.sh"
-  )
-
   distrobox create "${flags[@]}"
-  echo "Created '$CONTAINER_NAME'."
+  echo "Created '$CONTAINER_NAME' (image tag: $tag)."
 }
 
 cmd_remove() {
@@ -62,7 +72,7 @@ Commands:
 
 Flags (for install/reinstall):
   --nvidia    Enable NVIDIA GPU support
-  --cursor    Install Cursor editor
+  --cursor    Include Cursor editor
 
 Examples:
   $(basename "$0") install --nvidia --cursor

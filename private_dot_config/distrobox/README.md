@@ -13,15 +13,30 @@ Debian Trixie container for builds that need system-level libraries. The host us
 ~/.config/distrobox/dev reinstall          # destroy + create
 ```
 
+## Image
+
+Pre-built images are pulled from `ghcr.io/caipiralink/dotfiles/dev`. Tags:
+
+| Tag | Contents |
+|-----|----------|
+| `latest` | Base image |
+| `nvidia` | + NVIDIA Container Toolkit GPG key |
+| `cursor` | + Cursor editor |
+| `nvidia-cursor` | + both |
+
+CI builds all four tags daily from the [`Dockerfile`](Dockerfile).
+
 ## What's inside
 
 APT mirror set to SAKURA internet (Japan).
 
-- build-essential, pkg-config
+- build-essential, pkg-config, clang, lld, gdb
 - libssl-dev, libicu-dev, libreadline-dev, zlib1g-dev
 - FFmpeg dev libraries + jellyfin-ffmpeg (from GitHub releases)
+- Emscripten SDK (`/opt/emsdk`, activate manually)
 - Docker CE CLI + buildx + compose plugin
 - aria2, zstd, socat
+- 1Password SSH signing wrapper (delegates to host via `distrobox-host-exec`)
 
 ```
 ┌──────────────────────────────────┐
