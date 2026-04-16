@@ -16,14 +16,16 @@ jobs:
           - { name: Linux x64,   runner: warp-ubuntu-latest-x64-4x }
           - { name: Linux ARM64, runner: warp-ubuntu-latest-arm64-4x }
           - { name: Windows x64, runner: warp-windows-latest-x64-4x }
-          - { name: Windows ARM, runner: windows-11-arm }
+          - { name: Windows ARM, runner: windows-11-arm, op_arch: x64 }
     env:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
     steps:
       - uses: actions/checkout@v6
 
       - name: Install 1Password CLI
-        uses: 1password/install-cli-action@v3
+        uses: caipiralink/op-install-cli-action@main
+        with:
+          arch: ${{ matrix.op_arch || '' }}
 
       - uses: jdx/mise-action@v2
         with:
