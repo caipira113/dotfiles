@@ -8,6 +8,7 @@ on:
     paths: ['private_dot_config/distrobox/**']
   schedule:
     - cron: '0 0 * * *'
+  workflow_dispatch:
 
 env:
   REGISTRY_IMAGE: ghcr.io/caipiralink/dotfiles/dev
