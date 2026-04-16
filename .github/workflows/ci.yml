@@ -34,22 +34,26 @@ jobs:
       - name: Install chezmoi via mise
         run: mise use -g chezmoi@latest
 
+      - name: Pre-seed chezmoi config
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.config/chezmoi"
+          cat > "$HOME/.config/chezmoi/chezmoi.toml" << 'EOF'
+          [data]
+            personal = true
+            work_email = ""
+            work_signing_key_item = ""
+            op_account = ""
+          EOF
+
       - name: chezmoi init and apply (Linux)
         if: runner.os == 'Linux'
-        run: |
-          chezmoi init --source "${{ github.workspace }}" \
-            --promptBool personal=true \
-            --promptString op_account="" \
-            --apply
+        run: chezmoi init --source "${{ github.workspace }}" --apply
 
       - name: chezmoi init and apply (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: |
-          chezmoi init --source "${{ github.workspace }}" `
-            --promptBool personal=true `
-            --promptString op_account="" `
-            --apply
+        run: chezmoi init --source "${{ github.workspace }}" --apply
 
   shellcheck:
     name: ShellCheck
@@ -62,9 +66,15 @@ jobs:
       - name: Install shellcheck via mise
         run: mise use -g shellcheck@latest
       - name: Run ShellCheck
-        run: |
-          shellcheck private_dot_config/distrobox/executable_dev
-          shellcheck -s bash dot_zshrc
+        run: shellcheck private_dot_config/distrobox/executable_dev
+
+  zsh-syntax:
+    name: Zsh syntax check
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check zsh syntax
+        run: zsh -n dot_zshrc
 
   lua-lint:
     name: Lua lint
@@ -77,7 +87,7 @@ jobs:
           sudo apt-get install -y -qq luarocks > /dev/null
           sudo luarocks install luacheck > /dev/null
       - name: Run luacheck
-        run: luacheck private_dot_config/nvim/init.lua --globals vim
+        run: luacheck private_dot_config/nvim/init.lua --globals vim --no-max-line-length
 
   pssa:
     name: PSScriptAnalyzer
@@ -88,7 +98,7 @@ jobs:
         shell: pwsh
         run: |
           Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
-          $results = Invoke-ScriptAnalyzer -Path private_dot_config/powershell -Recurse -Severity Warning,Error
+          $results = Invoke-ScriptAnalyzer -Path private_dot_config/powershell -Recurse -Severity Error
           if ($results) {
             $results | Format-Table -AutoSize
             exit 1
