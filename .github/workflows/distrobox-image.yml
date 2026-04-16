@@ -1,0 +1,126 @@
+name: Distrobox Image
+
+on:
+  push:
+    branches: [main]
+    paths: ['private_dot_config/distrobox/**']
+  pull_request:
+    paths: ['private_dot_config/distrobox/**']
+  schedule:
+    - cron: '0 0 * * *'
+
+env:
+  REGISTRY_IMAGE: ghcr.io/caipiralink/dotfiles/dev
+
+jobs:
+  build:
+    name: Build (${{ matrix.variant.name }} / ${{ matrix.platform }})
+    runs-on: ${{ matrix.platform == 'linux/amd64' && 'blacksmith-4vcpu-ubuntu-2404' || 'blacksmith-4vcpu-ubuntu-2404-arm' }}
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+        variant:
+          - { name: latest,        nvidia: '0', cursor: '0' }
+          - { name: nvidia,        nvidia: '1', cursor: '0' }
+          - { name: cursor,        nvidia: '0', cursor: '1' }
+          - { name: nvidia-cursor, nvidia: '1', cursor: '1' }
+    steps:
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: useblacksmith/setup-docker-builder@v1
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build (PR validation)
+        if: github.event_name == 'pull_request'
+        uses: useblacksmith/build-push-action@v2
+        with:
+          context: private_dot_config/distrobox
+          platforms: ${{ matrix.platform }}
+          build-args: |
+            SETUP_NVIDIA=${{ matrix.variant.nvidia }}
+            SETUP_CURSOR=${{ matrix.variant.cursor }}
+
+      - name: Build and push by digest
+        if: github.event_name != 'pull_request'
+        id: build
+        uses: useblacksmith/build-push-action@v2
+        with:
+          context: private_dot_config/distrobox
+          platforms: ${{ matrix.platform }}
+          build-args: |
+            SETUP_NVIDIA=${{ matrix.variant.nvidia }}
+            SETUP_CURSOR=${{ matrix.variant.cursor }}
+          provenance: false
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
+
+      - name: Export digest
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          name: digests-${{ matrix.variant.name }}-${{ env.PLATFORM_PAIR }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    name: Merge (${{ matrix.variant }})
+    if: github.event_name != 'pull_request'
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        variant: [latest, nvidia, cursor, nvidia-cursor]
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v8
+        with:
+          path: /tmp/digests
+          pattern: digests-${{ matrix.variant }}-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: useblacksmith/setup-docker-builder@v1
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create manifest list and push
+        working-directory: /tmp/digests
+        run: |
+          docker buildx imagetools create \
+            -t "${{ env.REGISTRY_IMAGE }}:${{ matrix.variant }}" \
+            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+
+      - name: Inspect image
+        run: docker buildx imagetools inspect "${{ env.REGISTRY_IMAGE }}:${{ matrix.variant }}"
