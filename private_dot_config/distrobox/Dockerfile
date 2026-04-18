@@ -2,7 +2,6 @@ FROM debian:trixie
 
 ARG TARGETARCH
 ARG SETUP_NVIDIA=0
-ARG SETUP_CURSOR=0
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -31,15 +30,12 @@ RUN apt-get update && \
       "$VERSION_CODENAME" "$TARGETARCH" \
       > /etc/apt/sources.list.d/docker.sources
 
-# Cursor repository (conditional)
-RUN if [ "$SETUP_CURSOR" = "1" ]; then \
-      curl -fsSL https://downloads.cursor.com/keys/anysphere.asc \
-        | gpg --batch --dearmor > /etc/apt/keyrings/cursor.gpg && \
-      chmod 644 /etc/apt/keyrings/cursor.gpg && \
-      printf 'deb [arch=%s signed-by=/etc/apt/keyrings/cursor.gpg] https://downloads.cursor.com/aptrepo stable main\n' \
-        "$TARGETARCH" \
-        > /etc/apt/sources.list.d/cursor.list; \
-    fi
+# VS Code repository
+RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
+      | gpg --batch --dearmor > /etc/apt/keyrings/microsoft.gpg && \
+    chmod 644 /etc/apt/keyrings/microsoft.gpg && \
+    printf 'Types: deb\nURIs: https://packages.microsoft.com/repos/code\nSuites: stable\nComponents: main\nArchitectures: amd64 arm64 armhf\nSigned-By: /etc/apt/keyrings/microsoft.gpg\n' \
+      > /etc/apt/sources.list.d/vscode.sources
 
 # APT packages
 # hadolint ignore=DL3008
@@ -74,10 +70,8 @@ RUN apt-get update && \
       openssh-client \
       docker-ce-cli \
       docker-buildx-plugin \
-      docker-compose-plugin && \
-    if [ "$SETUP_CURSOR" = "1" ]; then \
-      apt-get install -y --no-install-recommends cursor; \
-    fi && \
+      docker-compose-plugin \
+      code && \
     rm -rf /var/lib/apt/lists/*
 
 # Emscripten SDK

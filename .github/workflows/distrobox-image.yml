@@ -25,10 +25,8 @@ jobs:
       matrix:
         platform: [linux/amd64, linux/arm64]
         variant:
-          - { name: latest,        nvidia: '0', cursor: '0' }
-          - { name: nvidia,        nvidia: '1', cursor: '0' }
-          - { name: cursor,        nvidia: '0', cursor: '1' }
-          - { name: nvidia-cursor, nvidia: '1', cursor: '1' }
+          - { name: latest, nvidia: '0' }
+          - { name: nvidia, nvidia: '1' }
     steps:
       - name: Prepare
         run: |
@@ -56,7 +54,6 @@ jobs:
           platforms: ${{ matrix.platform }}
           build-args: |
             SETUP_NVIDIA=${{ matrix.variant.nvidia }}
-            SETUP_CURSOR=${{ matrix.variant.cursor }}
 
       - name: Build and push by digest
         if: github.event_name != 'pull_request'
@@ -67,7 +64,6 @@ jobs:
           platforms: ${{ matrix.platform }}
           build-args: |
             SETUP_NVIDIA=${{ matrix.variant.nvidia }}
-            SETUP_CURSOR=${{ matrix.variant.cursor }}
           provenance: false
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
 
@@ -97,7 +93,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        variant: [latest, nvidia, cursor, nvidia-cursor]
+        variant: [latest, nvidia]
     steps:
       - name: Download digests
         uses: actions/download-artifact@v8

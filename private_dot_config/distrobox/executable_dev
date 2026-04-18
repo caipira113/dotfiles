@@ -5,31 +5,26 @@ CONTAINER_NAME="dev-debian-trixie"
 IMAGE="ghcr.io/caipiralink/dotfiles/dev"
 
 resolve_tag() {
-  local nvidia=$1 cursor=$2
-  if [ "$nvidia" = "1" ] && [ "$cursor" = "1" ]; then
-    echo "nvidia-cursor"
-  elif [ "$nvidia" = "1" ]; then
+  local nvidia=$1
+  if [ "$nvidia" = "1" ]; then
     echo "nvidia"
-  elif [ "$cursor" = "1" ]; then
-    echo "cursor"
   else
     echo "latest"
   fi
 }
 
 cmd_install() {
-  local nvidia=0 cursor=0
+  local nvidia=0
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --nvidia) nvidia=1; shift ;;
-      --cursor) cursor=1; shift ;;
       *) echo "Unknown flag: $1"; exit 1 ;;
     esac
   done
 
   local tag
-  tag=$(resolve_tag "$nvidia" "$cursor")
+  tag=$(resolve_tag "$nvidia")
 
   local flags=(
     --image "${IMAGE}:${tag}"
@@ -72,10 +67,9 @@ Commands:
 
 Flags (for install/reinstall):
   --nvidia    Enable NVIDIA GPU support
-  --cursor    Include Cursor editor
 
 Examples:
-  $(basename "$0") install --nvidia --cursor
+  $(basename "$0") install --nvidia
   $(basename "$0") reinstall --nvidia
   $(basename "$0") enter
 EOF
