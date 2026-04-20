@@ -22,6 +22,7 @@
 
 - IMPORTANT: On Windows (detected via `C:\...` paths or `win32` platform), the default shell is PowerShell (pwsh 7+). From the very first command, use the PowerShell tool and follow pwsh syntax (`Get-ChildItem`, `$env:VAR`, `&&`/`||`, here-string `@'...'@`). Do not fall back to the Bash tool or bash syntax (`ls`, `$VAR`, `export`, `cat <<EOF`).
 - Use the Bash tool only when the user explicitly requests WSL or a bash environment. On macOS and Linux, bash/zsh is the default.
+- For privilege elevation on Windows 11, use the built-in `sudo` command (e.g., `sudo New-Item -Path 'C:\ProgramData\foo'`). Do not use `Start-Process -Verb RunAs`, `runas`, or similar legacy UAC elevation patterns.
 
 # Git
 
