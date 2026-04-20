@@ -17,4 +17,10 @@ if (Test-Path $vsLlvmBin) {
         [System.Environment]::SetEnvironmentVariable('Path', $newPath, 'User')
     }
 }
+
+# sccache
+[System.Environment]::SetEnvironmentVariable('RUSTC_WRAPPER', 'sccache', 'User')
+[System.Environment]::SetEnvironmentVariable('CMAKE_C_COMPILER_LAUNCHER', 'sccache', 'User')
+[System.Environment]::SetEnvironmentVariable('CMAKE_CXX_COMPILER_LAUNCHER', 'sccache', 'User')
+[System.Environment]::SetEnvironmentVariable('SCCACHE_DIR', "$env:USERPROFILE\.cache\sccache", 'User')
 {{ end -}}
