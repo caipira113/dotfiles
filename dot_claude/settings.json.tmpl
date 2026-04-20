@@ -14,5 +14,14 @@
   "skipAutoPermissionPrompt": true,
   "permissions": {
     "defaultMode": "auto"
+  },
+  "hooks": {
+    "SessionStart": [{
+      "matcher": "startup|resume|compact",
+      "hooks": [{
+        "type": "command",
+        "command": "python {{ .chezmoi.homeDir | replace `\` `/` }}/.claude/hooks/inject-excluded-claude-md.py"
+      }]
+    }]
   }
 }
