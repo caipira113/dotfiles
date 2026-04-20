@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>dotfiles · caipira</title>
+<meta name="description" content="Personal dotfiles managed with chezmoi. Configs I actually understand — fork and adjust."/>
+<meta property="og:title" content="dotfiles · caipira"/>
+<meta property="og:description" content="Personal dotfiles managed with chezmoi. Configs I actually understand — fork and adjust."/>
+<meta property="og:image" content="https://raw.githubusercontent.com/caipiralink/dotfiles/main/assets/dotfiles-banner.svg"/>
+<script>
+  // read theme preference EARLY to avoid flash: localStorage > OS preference
+  (function() {
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) {}
+  })();
+</script>
+<script type="module" src="./src/main.ts"></script>
+</head>
+<body>
+
+<div class="theme-toggle" role="group" aria-label="theme">
+  <button type="button" data-theme-set="light" aria-pressed="false" aria-label="Light theme" title="Light"></button>
+  <button type="button" data-theme-set="auto"  aria-pressed="true"  aria-label="Match system theme" title="Auto"></button>
+  <button type="button" data-theme-set="dark"  aria-pressed="false" aria-label="Dark theme" title="Dark"></button>
+</div>
+
+<div class="fog-layer" aria-hidden="true">
+  <div class="fog-blob a"></div>
+  <div class="fog-blob b"></div>
+  <div class="fog-blob c"></div>
+</div>
+<div class="grid-bg" aria-hidden="true"></div>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="crumbs">
+      <span class="dot"></span>
+      <span>caipiralink</span>
+      <span style="opacity:0.5">/</span>
+      <span>dotfiles</span>
+    </div>
+
+    <h1>dotfiles<span class="dot">.</span></h1>
+
+    <p class="tagline">
+      Personal configs, managed with <em>chezmoi</em>. Built from scratch — <em>I prefer configs I actually understand</em> over copying large setups I can't maintain.
+    </p>
+
+    <div class="terminal" role="note" aria-label="install command">
+      <div class="chrome">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span class="label">~</span>
+      </div>
+      <div class="body">
+        <div class="line">
+          <span class="sigil">$</span><span class="typed" id="typed"></span><span class="caret"></span>
+        </div>
+        <div class="hint">(fork first — some values are hardcoded for my environment)</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contents">
+    <div class="section-head">
+      <h2>Contents</h2>
+      <div class="meta">eleven configs · one repo</div>
+    </div>
+
+    <div class="grid" id="contents-grid"></div>
+  </section>
+
+  <section class="commits">
+    <div class="section-head">
+      <h2>Recent</h2>
+      <div class="meta" id="commits-meta">loading…</div>
+    </div>
+    <ul class="commit-list" id="commit-list">
+      <li class="commit loading">fetching from github…</li>
+    </ul>
+  </section>
+
+  <footer>
+    <div>© caipira · <a href="https://github.com/caipiralink/dotfiles/blob/main/LICENSE">Unlicense</a></div>
+    <div class="links">
+      <a href="https://github.com/caipiralink/dotfiles">github</a>
+      <a href="https://caipira.link">caipira.link</a>
+    </div>
+  </footer>
+
+</main>
+
+</body>
+</html>

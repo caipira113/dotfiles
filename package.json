@@ -1,0 +1,9 @@
+{
+  "name": "caipiralink-dotfiles-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun ./index.html",
+    "build": "bun build ./index.html --minify --outdir=dist"
+  }
+}
