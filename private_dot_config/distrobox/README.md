@@ -32,7 +32,7 @@ APT mirror set to SAKURA internet (Japan).
 - FFmpeg dev libraries + jellyfin-ffmpeg (from GitHub releases)
 - Emscripten SDK (`/opt/emsdk`, activate manually)
 - Docker CE CLI + buildx + compose plugin
-- Visual Studio Code
+- Visual Studio Code, Claude Desktop
 - aria2, zstd, socat
 - 1Password SSH signing wrapper (delegates to host via `distrobox-host-exec`)
 

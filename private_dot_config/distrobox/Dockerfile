@@ -37,6 +37,13 @@ RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
     printf 'Types: deb\nURIs: https://packages.microsoft.com/repos/code\nSuites: stable\nComponents: main\nArchitectures: amd64 arm64 armhf\nSigned-By: /etc/apt/keyrings/microsoft.gpg\n' \
       > /etc/apt/sources.list.d/vscode.sources
 
+# Claude Desktop repository
+RUN curl -fsSL https://aaddrick.github.io/claude-desktop-debian/KEY.gpg \
+      | gpg --batch --dearmor > /etc/apt/keyrings/claude-desktop.gpg && \
+    chmod 644 /etc/apt/keyrings/claude-desktop.gpg && \
+    printf 'Types: deb\nURIs: https://aaddrick.github.io/claude-desktop-debian\nSuites: stable\nComponents: main\nArchitectures: amd64 arm64\nSigned-By: /etc/apt/keyrings/claude-desktop.gpg\n' \
+      > /etc/apt/sources.list.d/claude-desktop.sources
+
 # APT packages
 # hadolint ignore=DL3008
 RUN apt-get update && \
@@ -71,7 +78,8 @@ RUN apt-get update && \
       docker-ce-cli \
       docker-buildx-plugin \
       docker-compose-plugin \
-      code && \
+      code \
+      claude-desktop && \
     rm -rf /var/lib/apt/lists/*
 
 # Emscripten SDK
