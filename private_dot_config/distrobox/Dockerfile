@@ -5,11 +5,8 @@ ARG SETUP_NVIDIA=0
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# APT mirror (SAKURA, Japan) + keyrings directory
-RUN sed -i \
-      -e 's|URIs: http://deb.debian.org/debian$|URIs: http://debian-mirror.sakura.ne.jp/debian|' \
-      /etc/apt/sources.list.d/debian.sources && \
-    install -m 0755 -d /etc/apt/keyrings
+# keyrings directory
+RUN install -m 0755 -d /etc/apt/keyrings
 
 # NVIDIA Container Toolkit GPG key (conditional)
 RUN if [ "$SETUP_NVIDIA" = "1" ]; then \

@@ -25,8 +25,6 @@ CI builds both tags daily from the [`Dockerfile`](Dockerfile).
 
 ## What's inside
 
-APT mirror set to SAKURA internet (Japan).
-
 - build-essential, pkg-config, clang, lld, gdb
 - libssl-dev, libicu-dev, libreadline-dev, zlib1g-dev
 - FFmpeg dev libraries + jellyfin-ffmpeg (from GitHub releases)
