@@ -7,10 +7,11 @@
     :root:not([data-theme="light"]) {
       --bg: #0E0920;
       --bg-subtle: #120B28;
-      --surface: rgba(51, 39, 90, 0.38);
+      /* cards sit on top of bright fog — tint the acrylic darker so fog reads as ambience, not surface */
+      --surface: rgba(20, 14, 40, 0.68);
       --surface-solid: #1C1432;
-      --surface-raised: rgba(78, 59, 130, 0.48);
-      --surface-inset: rgba(28, 20, 50, 0.62);
+      --surface-raised: rgba(40, 28, 76, 0.72);
+      --surface-inset: rgba(14, 9, 28, 0.72);
       --fg1: #F3EDFB;
       --fg2: #C9BDEC;
       --fg3: #A28ED8;
@@ -23,14 +24,14 @@
       --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.44), 0 2px 6px rgba(0, 0, 0, 0.32);
     }
   }
-  /* explicit dark override */
-  :root[data-theme="dark"] {
+  /* explicit dark override (needs specificity to beat colors_and_type.css's @media block) */
+  :root[data-theme="dark"][data-theme="dark"] {
     --bg: #0E0920;
     --bg-subtle: #120B28;
-    --surface: rgba(51, 39, 90, 0.38);
+    --surface: rgba(20, 14, 40, 0.68);
     --surface-solid: #1C1432;
-    --surface-raised: rgba(78, 59, 130, 0.48);
-    --surface-inset: rgba(28, 20, 50, 0.62);
+    --surface-raised: rgba(40, 28, 76, 0.72);
+    --surface-inset: rgba(14, 9, 28, 0.72);
     --fg1: #F3EDFB;
     --fg2: #C9BDEC;
     --fg3: #A28ED8;
@@ -193,15 +194,15 @@
 
   /* terminal */
   .terminal {
-    background: var(--surface-inset);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 0;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), var(--shadow-md);
+    box-shadow: var(--shadow-md);
     max-width: 640px;
     overflow: hidden;
-    backdrop-filter: blur(12px) saturate(140%);
-    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: var(--acrylic-filter-md);
+    -webkit-backdrop-filter: var(--acrylic-filter-md);
   }
   .terminal .chrome {
     display: flex;
@@ -287,12 +288,15 @@
     border: 1px solid var(--border);
     border-radius: 16px;
     overflow: hidden;
+    isolation: isolate;
   }
   @media (max-width: 720px) {
     .grid { grid-template-columns: 1fr; }
   }
   .card {
-    background: var(--bg);
+    background: var(--surface);
+    backdrop-filter: var(--acrylic-filter-md);
+    -webkit-backdrop-filter: var(--acrylic-filter-md);
     padding: 24px 24px 22px;
     display: flex;
     flex-direction: column;
@@ -355,6 +359,9 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    background: var(--surface);
+    backdrop-filter: var(--acrylic-filter-md);
+    -webkit-backdrop-filter: var(--acrylic-filter-md);
     border: 1px solid var(--border);
     border-radius: 16px;
     overflow: hidden;
@@ -441,11 +448,11 @@
     gap: 6px;
     padding: 6px;
     background: var(--surface);
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: var(--acrylic-filter-md);
+    -webkit-backdrop-filter: var(--acrylic-filter-md);
     border: 1px solid var(--border);
     border-radius: 9999px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), var(--shadow-md, 0 4px 12px rgba(0,0,0,0.12));
+    box-shadow: var(--shadow-md);
   }
   .theme-toggle button {
     appearance: none;
