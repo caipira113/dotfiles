@@ -38,11 +38,11 @@ When multiple tools have overlapping capabilities, pick by use case. Fall back t
 
 - Official library documentation: `context7` (`resolve-library-id` → `query-docs`). Try this before a general web search.
 - Cloudflare documentation: `search_cloudflare_documentation`.
-- Semantic web search: `exa.web_search_exa` by default. For simple keyword lookups, the built-in `WebSearch` is fine.
+- Semantic web search: `exa.web_search_exa` by default.
 - Verbatim body of a static page (default): `exa.web_fetch_exa`. Clean markdown; adjust size via `maxCharacters`. Use `firecrawl_scrape` when metadata or the full page is needed.
 - JS-rendered, SPA, or WASM pages: must use `firecrawl_scrape` (with `waitFor`). `WebFetch` and `exa.web_fetch_exa` do not execute JS and return empty content.
-- Fast summary or query over a static page: built-in `WebFetch`. Note that it rewrites content via an internal LLM, so do not trust its output for verbatim quotes, numbers, code, or parameter specs.
 - Login, click, form input, and other interactions: `firecrawl_interact`.
 - Crawling multiple pages or entire sites: `firecrawl_crawl`, `firecrawl_map`.
 - Local dev server UI verification: Claude Preview.
 - Browser automation or UI verification on external sites: Claude in Chrome.
+- Built-in `WebFetch` and `WebSearch` are fallbacks only — use them when the Exa / Firecrawl / context7 tools above are unavailable or have failed, never as a first choice. `WebFetch` rewrites content via an internal LLM, so its output is unreliable for verbatim quotes, numbers, code, or parameter specs.
