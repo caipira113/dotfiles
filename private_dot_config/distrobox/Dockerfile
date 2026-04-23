@@ -97,8 +97,9 @@ RUN printf '#!/bin/bash\nexec env IBUS_USE_PORTAL=1 GTK_IM_MODULE=ibus QT_IM_MOD
       /usr/share/applications/claude-desktop.desktop \
       > /usr/share/applications/claude-desktop-ime.desktop
 
-# docker delegated to host via distrobox-host-exec
-RUN ln -s /usr/bin/distrobox-host-exec /usr/local/bin/docker
+# docker and xdg-open delegated to host via distrobox-host-exec
+RUN ln -s /usr/bin/distrobox-host-exec /usr/local/bin/docker && \
+    ln -s /usr/bin/distrobox-host-exec /usr/local/bin/xdg-open
 
 # 1Password SSH signing wrapper (delegates to host via distrobox-host-exec)
 RUN mkdir -p /opt/1Password && \

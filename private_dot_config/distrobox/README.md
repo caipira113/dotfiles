@@ -31,7 +31,7 @@ CI builds both tags daily from the [`Dockerfile`](Dockerfile).
 - Emscripten SDK (`/opt/emsdk`, activate manually)
 - Visual Studio Code, Claude Desktop
 - aria2, zstd, socat
-- `docker` delegated to host via `distrobox-host-exec`
+- `docker`, `xdg-open` delegated to host via `distrobox-host-exec`
 - 1Password SSH signing wrapper (delegates to host via `distrobox-host-exec`)
 
 ```
