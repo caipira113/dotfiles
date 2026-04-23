@@ -16,16 +16,9 @@ RUN if [ "$SETUP_NVIDIA" = "1" ]; then \
         | gpg --batch --dearmor > /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg; \
     fi
 
-# Docker CE repository
+# ca-certificates + curl + gnupg for downstream repo setup
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates curl gnupg && \
-    curl -fsSL https://download.docker.com/linux/debian/gpg \
-      -o /etc/apt/keyrings/docker.asc && \
-    chmod a+r /etc/apt/keyrings/docker.asc && \
-    . /etc/os-release && \
-    printf 'Types: deb\nURIs: https://download.docker.com/linux/debian\nSuites: %s\nComponents: stable\nArchitectures: %s\nSigned-By: /etc/apt/keyrings/docker.asc\n' \
-      "$VERSION_CODENAME" "$TARGETARCH" \
-      > /etc/apt/sources.list.d/docker.sources
+    apt-get install -y --no-install-recommends ca-certificates curl gnupg
 
 # VS Code repository
 RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
@@ -72,9 +65,6 @@ RUN apt-get update && \
       zstd \
       socat \
       openssh-client \
-      docker-ce-cli \
-      docker-buildx-plugin \
-      docker-compose-plugin \
       code \
       claude-desktop \
       ibus \
@@ -106,6 +96,9 @@ RUN printf '#!/bin/bash\nexec env IBUS_USE_PORTAL=1 GTK_IM_MODULE=ibus QT_IM_MOD
     sed 's|^Exec=.*|Exec=claude-desktop-ime %U|' \
       /usr/share/applications/claude-desktop.desktop \
       > /usr/share/applications/claude-desktop-ime.desktop
+
+# docker delegated to host via distrobox-host-exec
+RUN ln -s /usr/bin/distrobox-host-exec /usr/local/bin/docker
 
 # 1Password SSH signing wrapper (delegates to host via distrobox-host-exec)
 RUN mkdir -p /opt/1Password && \

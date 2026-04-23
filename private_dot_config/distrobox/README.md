@@ -29,9 +29,9 @@ CI builds both tags daily from the [`Dockerfile`](Dockerfile).
 - libssl-dev, libicu-dev, libreadline-dev, zlib1g-dev
 - FFmpeg dev libraries + jellyfin-ffmpeg (from GitHub releases)
 - Emscripten SDK (`/opt/emsdk`, activate manually)
-- Docker CE CLI + buildx + compose plugin
 - Visual Studio Code, Claude Desktop
 - aria2, zstd, socat
+- `docker` delegated to host via `distrobox-host-exec`
 - 1Password SSH signing wrapper (delegates to host via `distrobox-host-exec`)
 
 ```
@@ -40,7 +40,7 @@ CI builds both tags daily from the [`Dockerfile`](Dockerfile).
 │  mise tools ← userspace, in ~/   │
 │ ┌──────────────────────────────┐ │
 │ │ Distrobox (Debian Trixie)    │ │
-│ │  system -dev libs, docker CLI│ │
+│ │  system -dev libs            │ │
 │ │  home dir = host home        │ │
 │ └──────────────────────────────┘ │
 └──────────────────────────────────┘

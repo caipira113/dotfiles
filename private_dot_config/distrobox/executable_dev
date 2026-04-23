@@ -35,13 +35,6 @@ cmd_install() {
 
   [ "$nvidia" = "1" ] && flags+=(--nvidia)
 
-  if [ -S /var/run/docker.sock ]; then
-    flags+=(
-      --additional-flags "--userns=keep-id:size=65534"
-      --init-hooks "if [ -S /run/host/run/docker.sock ]; then ln -sf /run/host/run/docker.sock /var/run/docker.sock; gid=\$(stat -L -c %g /var/run/docker.sock); group=\$(getent group \$gid | cut -d: -f1); [ -z \"\$group\" ] && { groupadd -g \$gid docker && group=docker; }; usermod -aG \"\$group\" $USER; fi"
-    )
-  fi
-
   distrobox create "${flags[@]}"
   distrobox enter --name "$CONTAINER_NAME" -- distrobox-export --app claude-desktop-ime
   distrobox enter --name "$CONTAINER_NAME" -- distrobox-export --app code
