@@ -105,6 +105,20 @@ RUN FFMPEG_DEB_URL=$(curl -fsSL https://api.github.com/repos/jellyfin/jellyfin-f
     ln -sf /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg && \
     ln -sf /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
 
+# Codex Desktop (latest release, arch-aware)
+RUN case "$TARGETARCH" in \
+      amd64|arm64) codex_arch="$TARGETARCH" ;; \
+      *) echo "Unsupported TARGETARCH: $TARGETARCH"; exit 1 ;; \
+    esac && \
+    CODEX_DEB_URL=$(curl -fsSL https://api.github.com/repos/Haleclipse/CodexDesktop-Rebuild/releases/latest \
+      | grep -oP '"browser_download_url":\s*"\K[^"]*codex_[^"]*_'${codex_arch}'\.deb' | head -1) && \
+    test -n "${CODEX_DEB_URL}" && \
+    curl -fsSL -o /tmp/codex.deb "${CODEX_DEB_URL}" && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends /tmp/codex.deb && \
+    rm -f /tmp/codex.deb && \
+    rm -rf /var/lib/apt/lists/*
+
 # Claude Desktop IME wrapper (IBus environment variables) + desktop entry
 RUN printf '#!/bin/bash\nexec env IBUS_USE_PORTAL=1 GTK_IM_MODULE=ibus QT_IM_MODULE=ibus XMODIFIERS=@im=ibus claude-desktop "$@"\n' \
       > /usr/local/bin/claude-desktop-ime && \
