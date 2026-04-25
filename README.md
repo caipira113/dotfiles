@@ -24,6 +24,7 @@ Chezmoi will ask whether this is a personal or work machine and configure Git id
 | [`powershell/`](private_dot_config/powershell/) | `~/.config/powershell/` | PowerShell 7 profile — PSReadLine, `eza` aliases, mise/starship/kubectl/helm activation, fzf keybindings. Distributed to PS 5 and PS 7 profile paths by a chezmoi script. |
 | [`starship.toml`](private_dot_config/starship.toml) | `~/.config/starship.toml` | Minimal — only overrides Node.js detection to `package.json` / `.node-version` / `node_modules`. |
 | [`dot_gitconfig.tmpl`](dot_gitconfig.tmpl) | `~/.gitconfig` | SSH commit signing via 1Password. Personal/work identity templated by chezmoi. Signing program path adapts to OS. |
+| [`dot_codex/`](dot_codex/) | `~/.codex/` | Codex global user instructions. |
 | [`nvim/`](private_dot_config/nvim/) | `~/.config/nvim/` | Single-file Neovim config with lazy.nvim. [→ details](private_dot_config/nvim/README.md) |
 | [`mise/`](private_dot_config/mise/) | `~/.config/mise/` | 30+ dev tools managed by mise. [→ full list](private_dot_config/mise/README.md) |
 | [`distrobox/`](private_dot_config/distrobox/) | `~/.config/distrobox/` | Debian Trixie dev container provisioning. [→ details](private_dot_config/distrobox/README.md) |
