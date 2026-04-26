@@ -7,6 +7,7 @@ Debian Trixie container for builds that need system-level libraries. The host us
 ```bash
 ~/.config/distrobox/dev install            # create
 ~/.config/distrobox/dev install --nvidia    # with NVIDIA support
+~/.config/distrobox/dev install --vm        # rootful systemd container for VM experiments
 ~/.config/distrobox/dev enter              # enter
 ~/.config/distrobox/dev remove             # destroy
 ~/.config/distrobox/dev reinstall          # destroy + create

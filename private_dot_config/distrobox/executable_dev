@@ -13,12 +13,35 @@ resolve_tag() {
   fi
 }
 
+container_exists() {
+  local root=$1
+  local list_flags=(--no-color)
+
+  [ "$root" = "1" ] && list_flags=(--root "${list_flags[@]}")
+
+  distrobox list "${list_flags[@]}" |
+    awk -F'|' -v name="$CONTAINER_NAME" 'NR > 1 { gsub(/^[ \t]+|[ \t]+$/, "", $2); if ($2 == name) found = 1 } END { exit !found }'
+}
+
+container_root_mode() {
+  if container_exists 0; then
+    echo 0
+  elif container_exists 1; then
+    echo 1
+  else
+    echo "Container '$CONTAINER_NAME' does not exist." >&2
+    exit 1
+  fi
+}
+
 cmd_install() {
   local nvidia=0
+  local vm=0
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --nvidia) nvidia=1; shift ;;
+      --vm) vm=1; shift ;;
       *) echo "Unknown flag: $1"; exit 1 ;;
     esac
   done
@@ -34,21 +57,40 @@ cmd_install() {
   )
 
   [ "$nvidia" = "1" ] && flags+=(--nvidia)
+  [ "$vm" = "1" ] && flags+=(--root --init --unshare-all)
+
+  local enter_flags=(--name "$CONTAINER_NAME")
+  [ "$vm" = "1" ] && enter_flags=(--root "${enter_flags[@]}")
 
   distrobox create "${flags[@]}"
-  distrobox enter --name "$CONTAINER_NAME" -- distrobox-export --app claude-desktop-ime
-  distrobox enter --name "$CONTAINER_NAME" -- distrobox-export --app codex
-  distrobox enter --name "$CONTAINER_NAME" -- distrobox-export --app code
+  distrobox enter "${enter_flags[@]}" -- distrobox-export --app claude-desktop-ime
+  distrobox enter "${enter_flags[@]}" -- distrobox-export --app codex
+  distrobox enter "${enter_flags[@]}" -- distrobox-export --app code
   echo "Created '$CONTAINER_NAME' (image tag: $tag)."
 }
 
 cmd_remove() {
-  distrobox rm --force "$CONTAINER_NAME"
+  local root
+  root=$(container_root_mode)
+
+  if [ "$root" = "1" ]; then
+    distrobox rm --root --force "$CONTAINER_NAME"
+  else
+    distrobox rm --force "$CONTAINER_NAME"
+  fi
+
   echo "Removed '$CONTAINER_NAME'."
 }
 
 cmd_enter() {
-  distrobox enter "$CONTAINER_NAME"
+  local root
+  root=$(container_root_mode)
+
+  if [ "$root" = "1" ]; then
+    distrobox enter --root "$CONTAINER_NAME"
+  else
+    distrobox enter "$CONTAINER_NAME"
+  fi
 }
 
 cmd_reinstall() {
@@ -70,9 +112,11 @@ Commands:
 
 Flags (for install/reinstall):
   --nvidia    Enable NVIDIA GPU support
+  --vm        Create a rootful systemd container for VM experiments
 
 Examples:
   $(basename "$0") install --nvidia
+  $(basename "$0") install --vm
   $(basename "$0") reinstall --nvidia
   $(basename "$0") enter
 EOF
