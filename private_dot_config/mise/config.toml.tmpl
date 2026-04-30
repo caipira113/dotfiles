@@ -44,6 +44,7 @@ kubectl = "latest"
 lazygit = "latest"
 neovim = "latest"
 node = "lts"
+"npm:@openai/codex" = "latest"
 {{ if and (eq .chezmoi.os "windows") (eq .chezmoi.arch "arm64") -}}
 "cargo:oha" = "latest"
 {{- else -}}
@@ -58,6 +59,7 @@ ripgrep = "latest"
 {{- end }}
 rust = "latest"
 sccache = "latest"
+sing-box = "latest"
 starship = "latest"
 tmux = "latest"
 upx = "latest" {{/* TODO: no Windows ARM64 binary available */}}
