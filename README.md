@@ -39,6 +39,7 @@ Chezmoi will ask whether this is a personal or work machine and configure Git id
 |---|---|
 | [`run_once_windows_env.ps1.tmpl`](run_once_windows_env.ps1.tmpl) | One-time Windows user env setup: `XDG_CONFIG_HOME`, sccache (`RUSTC_WRAPPER`, `CMAKE_{C,CXX}_COMPILER_LAUNCHER`, `SCCACHE_DIR`), and appending the VS Build Tools LLVM `bin` (arch-aware) to `PATH`. |
 | [`run_onchange_windows_profile.ps1.tmpl`](run_onchange_windows_profile.ps1.tmpl) | Copies the managed PowerShell profile to both `Documents\PowerShell\` (PS 7) and `Documents\WindowsPowerShell\` (PS 5). |
+| [`run_sync_codex_agents.ps1.tmpl`](run_sync_codex_agents.ps1.tmpl) / [`run_sync_codex_agents.sh.tmpl`](run_sync_codex_agents.sh.tmpl) | Syncs `categories/**/*.toml` from `caipiralink/awesome-codex-subagents` into `~/.codex/agents/`. |
 
 ## License
 

@@ -1,0 +1,61 @@
+{{ if ne .chezmoi.os "windows" -}}
+#!/bin/sh
+set -eu
+
+repo_url='https://github.com/caipiralink/awesome-codex-subagents.git'
+cache_base="${XDG_CACHE_HOME:-$HOME/.cache}"
+cache_root="$cache_base/codex/agents"
+repo_dir="$cache_root/awesome-codex-subagents"
+source_root="$repo_dir/categories"
+dest_dir="$HOME/.codex/agents"
+manifest="$dest_dir/.awesome-codex-subagents.manifest"
+
+mkdir -p "$cache_root" "$dest_dir"
+
+if [ -d "$repo_dir/.git" ]; then
+  git -C "$repo_dir" fetch --depth 1 origin
+  git -C "$repo_dir" reset --hard FETCH_HEAD >/dev/null
+elif [ -e "$repo_dir" ]; then
+  echo "Refusing to overwrite non-git path: $repo_dir" >&2
+  exit 1
+else
+  git clone --depth 1 "$repo_url" "$repo_dir"
+fi
+
+if [ ! -d "$source_root" ]; then
+  echo "Missing subagent categories directory: $source_root" >&2
+  exit 1
+fi
+
+names_file="$(mktemp)"
+dupes_file="$(mktemp)"
+trap 'rm -f "$names_file" "$dupes_file"' EXIT
+
+find "$source_root" -type f -name '*.toml' -exec basename {} \; | sort > "$names_file"
+if [ ! -s "$names_file" ]; then
+  echo "No subagent TOML files found in: $source_root" >&2
+  exit 1
+fi
+
+uniq -d "$names_file" > "$dupes_file"
+if [ -s "$dupes_file" ]; then
+  echo "Duplicate subagent TOML filenames are not safe to flatten:" >&2
+  cat "$dupes_file" >&2
+  exit 1
+fi
+
+if [ -f "$manifest" ]; then
+  while IFS= read -r name; do
+    [ -n "$name" ] || continue
+    if ! grep -Fxq "$name" "$names_file"; then
+      rm -f "$dest_dir/$name"
+    fi
+  done < "$manifest"
+fi
+
+find "$source_root" -type f -name '*.toml' | while IFS= read -r file; do
+  cp "$file" "$dest_dir/$(basename "$file")"
+done
+
+cp "$names_file" "$manifest"
+{{ end -}}

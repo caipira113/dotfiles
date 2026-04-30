@@ -1,0 +1,61 @@
+{{ if eq .chezmoi.os "windows" -}}
+$ErrorActionPreference = 'Stop'
+
+$repoUrl = 'https://github.com/caipiralink/awesome-codex-subagents.git'
+$cacheBase = if ($env:LOCALAPPDATA) {
+    $env:LOCALAPPDATA
+} else {
+    Join-Path $HOME '.cache'
+}
+$cacheRoot = Join-Path (Join-Path $cacheBase 'codex') 'agents'
+$repoDir = Join-Path $cacheRoot 'awesome-codex-subagents'
+$sourceRoot = Join-Path $repoDir 'categories'
+$destDir = Join-Path (Join-Path $HOME '.codex') 'agents'
+$manifest = Join-Path $destDir '.awesome-codex-subagents.manifest'
+
+New-Item -ItemType Directory -Path $cacheRoot, $destDir -Force | Out-Null
+
+if (Test-Path (Join-Path $repoDir '.git')) {
+    git -C $repoDir fetch --depth 1 origin
+    git -C $repoDir reset --hard FETCH_HEAD | Out-Null
+} elseif (Test-Path $repoDir) {
+    throw "Refusing to overwrite non-git path: $repoDir"
+} else {
+    git clone --depth 1 $repoUrl $repoDir
+}
+
+if (-not (Test-Path $sourceRoot)) {
+    throw "Missing subagent categories directory: $sourceRoot"
+}
+
+$files = Get-ChildItem -Path $sourceRoot -Recurse -Filter '*.toml' -File
+if (-not $files) {
+    throw "No subagent TOML files found in: $sourceRoot"
+}
+
+$duplicates = $files | Group-Object Name | Where-Object Count -gt 1
+if ($duplicates) {
+    $names = ($duplicates | ForEach-Object Name) -join ', '
+    throw "Duplicate subagent TOML filenames are not safe to flatten: $names"
+}
+
+$newNames = $files | Sort-Object Name | ForEach-Object Name
+
+if (Test-Path $manifest) {
+    foreach ($name in Get-Content $manifest) {
+        if (-not $name) {
+            continue
+        }
+
+        if ($newNames -notcontains $name) {
+            Remove-Item -LiteralPath (Join-Path $destDir $name) -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+foreach ($file in $files) {
+    Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $destDir $file.Name) -Force
+}
+
+$newNames | Set-Content -LiteralPath $manifest -Encoding utf8
+{{ end -}}
