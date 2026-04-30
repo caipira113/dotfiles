@@ -34,7 +34,13 @@
 
 - Treat the context window as a limited resource, not unlimited storage.
 - Keep only the information needed for the current flow active, and preserve durable state through concise notes, TODOs, or plans when work spans multiple steps.
-- When subagents are available and permitted by the current tool policy, delegate independent, well-scoped research, verification, or implementation support tasks to them.
+- The user has a standing preference for considering subagents when a task has a clear specialist fit, materially reduces context pressure, or can proceed independently in parallel.
+- This preference is not permission to spawn subagents for every request, vague deep-dive, or small local task.
+- Before spawning, identify the immediate local task and the independent side task that the subagent can handle without blocking progress.
+- Prefer specialist subagents that match the domain of the side task over generic agents.
+- Use a small number of targeted subagents rather than many broad exploratory agents.
+- When a suitable specialist subagent is available and the task split is clear, use it proactively without waiting for the user to repeat the preference.
+- Keep work local when the task is small, tightly coupled, latency-sensitive, or the subagent would need the same context as the main thread.
 - Give subagents concrete goals, read/write boundaries, expected outputs, and conflict-avoidance constraints.
 - Integrate subagent results deliberately; review the relevant findings and fold only the needed information back into the main task.
 - Do not carry every detail in the main thread when a task can be split safely; separate the immediate local task from delegated work.
@@ -44,6 +50,20 @@
 - Keep the direct local task focused on one primary `in_progress` item in normal cases.
 - When multiple subagents are working in parallel, track each delegated task as its own TODO item and update it as each result arrives.
 - Revise or remove TODOs that no longer match the current situation.
+
+## Context Recovery
+
+- Treat compacted summaries, memory, and prior-read recollection as orientation, not as proof of exact current state.
+- After a context compaction, resume, interruption, or long tool-heavy exchange, re-establish the current task before continuing implementation.
+- Distinguish facts that were freshly verified from facts that only come from a summary, memory, or prior context.
+- Do not proceed directly from "I previously read this" when the next step depends on exact details.
+- If exact state matters, re-verify it instead of trusting a compressed summary.
+- Re-read the relevant files, diffs, command outputs, MCP results, or source documents before relying on exact content, line numbers, API details, parameters, or UI state.
+- Context compaction does not by itself revoke current permissions, approvals, tool availability, or user direction.
+- Determine whether an action is allowed from the current environment, current tool policy, and the latest user instructions.
+- If the current context clearly preserves the user's approval or the action is still within the already approved scope, continue without asking for approval again.
+- If the approval scope is missing, ambiguous, or the action would introduce new elevated, destructive, credential, network, or user-visible side effects, clarify the scope before acting.
+- Before code edits, commits, pushes, or final claims, verify the current file state and repository state rather than relying on pre-compaction context.
 
 ## Safety And Approval
 
