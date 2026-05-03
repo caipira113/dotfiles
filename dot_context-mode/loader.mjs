@@ -16,7 +16,7 @@ const hookEnvPrefix = `context-mode-env-${snapshotKey}-`;
 const hookEnvTtlMs = 5 * 60 * 1000;
 
 if (process.env.CONTEXT_MODE_CAPTURE_ENV === "1" || process.argv.includes("--capture-env")) {
-  captureHookEnv();
+  captureHookEnv(getCaptureSnapshotCount());
   process.exit(0);
 }
 
@@ -67,24 +67,46 @@ function removeOldHookEnvSnapshots(now = Date.now()) {
   }
 }
 
-function captureHookEnv() {
+function getCaptureSnapshotCount() {
+  if (process.stdin.isTTY) return 1;
+
+  try {
+    const raw = readFileSync(0, "utf8");
+    if (!raw.trim()) return 1;
+
+    const input = JSON.parse(raw);
+    const toolInput = input && typeof input === "object" ? input.tool_input : null;
+    const commands = toolInput && typeof toolInput === "object" ? toolInput.commands : null;
+    if (Array.isArray(commands)) return Math.max(1, Math.min(commands.length, 128));
+  } catch {
+    // Hook stdin is optional for manual capture calls.
+  }
+
+  return 1;
+}
+
+function captureHookEnv(count = 1) {
   mkdirSync(hookEnvDir, { recursive: true });
   removeOldHookEnvSnapshots();
 
-  const finalFile = join(
-    hookEnvDir,
-    `${hookEnvPrefix}${Date.now()}-${process.pid}-${randomBytes(6).toString("hex")}.json`,
-  );
-  const tempFile = `${finalFile}.tmp`;
+  const createdAt = Date.now();
   const payload = JSON.stringify({
     version: 1,
     projectRoot,
-    createdAt: Date.now(),
+    createdAt,
     pid: process.pid,
     env: process.env,
   });
-  writeFileSync(tempFile, payload);
-  renameSync(tempFile, finalFile);
+
+  for (let index = 0; index < count; index += 1) {
+    const finalFile = join(
+      hookEnvDir,
+      `${hookEnvPrefix}${createdAt}-${process.pid}-${String(index).padStart(3, "0")}-${randomBytes(6).toString("hex")}.json`,
+    );
+    const tempFile = `${finalFile}.tmp`;
+    writeFileSync(tempFile, payload);
+    renameSync(tempFile, finalFile);
+  }
 }
 
 function getHookEnv() {
