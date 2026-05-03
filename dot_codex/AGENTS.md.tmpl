@@ -170,6 +170,23 @@
 - If MCP or browser tools are unavailable or fail, choose a reasonable fallback from official documentation, built-in general web search, local files, or user-provided material.
 - Briefly cite the source or verification method when external information is important to the answer.
 
+## Context-Mode Tools
+
+- Treat context-mode as a context-management and indexing layer, not as a replacement for source selection, MCP documentation tools, browser tools, `exa`, or `firecrawl`.
+- When context-mode tools are available, prefer them for large-output inspection, read-heavy research, resumed-session recovery, and cases where raw command output would consume excessive context.
+- Use `ctx_search(sort: "timeline")` after resume, compaction, interruption, or long tool-heavy work when prior exact state may affect the next action.
+- Use `ctx_batch_execute` for batches of commands whose output should be indexed and searched instead of read directly.
+- Use `ctx_execute_file` for large file, log, JSON, XML, CSV, or source analysis when only extracted facts are needed.
+- Use context-mode processing for counting, filtering, comparison, parsing, or transformation work when a small programmed summary can replace large raw output.
+- Keep raw shell output small. If command output may exceed roughly 20 lines, route it through context-mode or summarize it programmatically when practical.
+- Do not treat `ctx_fetch_and_index` as a general web search engine.
+- Use `ctx_fetch_and_index` only for known URLs when the goal is to keep fetched content out of the context window and query it through `ctx_search`.
+- For web discovery or search, prefer `exa` when available.
+- For JavaScript-rendered documentation, SPAs, app pages, marketing pages, structured crawls, or rendered-page content extraction, prefer `firecrawl` or browser tools according to the existing MCP/browser policy.
+- For source-like URLs, API responses, raw files, JSON, XML, RSS, or plain text, `ctx_fetch_and_index` is acceptable when a known URL should be indexed instead of dumping raw output into context.
+- If exact rendered page content matters, do not rely on `ctx_fetch_and_index` alone because it uses fetch plus HTML-to-Markdown conversion and does not execute client-side JavaScript.
+- Treat context-mode's bundled `AGENTS.md` as upstream reference material, not as a replacement for this file.
+
 ## Research And Current Information
 
 - Prefer official documentation for APIs, SDKs, frameworks, and vendor behavior.
