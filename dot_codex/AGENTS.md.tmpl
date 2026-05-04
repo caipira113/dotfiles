@@ -112,12 +112,26 @@
 
 ## Shell And File Work
 
-- Prefer `rg` or `rg --files` for searches when available.
+- Use `rg` or `rg --files` for exact textual searches, filename lookup, deterministic grep work, and fallback when semantic codebase search is not the right fit or unavailable.
 - Use lightweight commands for simple inspection and avoid unnecessary scripts.
 - Keep file edits as small and scoped as practical.
+- Use Morph `edit_file` as the default path for scoped edits to existing source files when available and appropriate.
+- Use deterministic patches, native edit tools, or formatters for generated files, mechanical rewrites, exact line-based edits, or cases where Morph `edit_file` is unavailable or less precise.
 - Run independent file reads or inspections in parallel when practical.
 - Before modifying existing files, briefly explain the intended edit.
 - Do not revert the user's existing changes unless explicitly requested.
+
+## Morph MCP Tools
+
+- Use Morph `edit_file` as the default editor for scoped source edits when available, especially multiple related edits in one file or edits that can be expressed with partial snippets.
+- Use `edit_file` instead of broad string replacement or full file rewrites when the target file already exists and the intended change can be described precisely.
+- Keep the same verification discipline after Morph edits: inspect the diff, preserve unrelated user changes, and run relevant checks.
+- Do not use `edit_file` for generated files, mechanical bulk rewrites, or cases where a deterministic patch or formatter is safer.
+- Use Morph `codebase_search` as the default starting point for semantic local codebase exploration, even when `rg` could eventually find matching lines.
+- Use Morph `github_codebase_search` as the default semantic search path for public GitHub repositories, especially third-party dependency bugs or upstream behavior checks.
+- Trust Morph search results enough to inspect the returned files and line ranges before starting broad grep-style searches.
+- Use `rg`, `rg --files`, language tooling, or repository search for exact keyword, filename, symbol, count, and deterministic grep work, or as a fallback when Morph search is unavailable or misses likely context.
+- Treat Morph search as codebase search only; it does not replace `exa`, `firecrawl`, browser tools, or other MCP source-selection rules for web documents, rendered pages, and general web discovery.
 
 ## Git
 
