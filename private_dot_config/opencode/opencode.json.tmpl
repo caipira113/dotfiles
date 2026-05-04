@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "shell": {{ if eq .chezmoi.os "windows" }}"pwsh"{{ else }}"zsh"{{ end }},
   "plugin": ["@morphllm/opencode-morph-plugin"],
   "instructions": [
     "node_modules/@morphllm/opencode-morph-plugin/instructions/morph-tools.md"
