@@ -10,4 +10,4 @@ All dev tools managed by [mise](https://mise.jdx.dev/). Available both on host a
 
 **Infra** — aws, gcloud, kubectl, helm
 
-**Meta** — chezmoi, git-lfs, neovim, starship
+**Meta** — chezmoi, git-lfs, neovim, opencode, starship
