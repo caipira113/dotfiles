@@ -25,6 +25,10 @@ export CMAKE_C_COMPILER_LAUNCHER=sccache
 export CMAKE_CXX_COMPILER_LAUNCHER=sccache
 export SCCACHE_DIR="$HOME/.cache/sccache"
 
+_dotfiles_env="$HOME/.config/shell/env.zsh"
+[ -f "$_dotfiles_env" ] && . "$_dotfiles_env"
+unset _dotfiles_env
+
 # ═══════════════════════════════════════════════════════════════
 #  PATH
 # ═══════════════════════════════════════════════════════════════

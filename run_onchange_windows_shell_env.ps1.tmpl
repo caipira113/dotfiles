@@ -1,0 +1,88 @@
+{{ if eq .chezmoi.os "windows" -}}
+{{- $shellEnvJSON := "{}" -}}
+{{- if not (env "CI") -}}
+{{-   $shellEnvJSON = onepasswordRead (printf "%s/shell_env_json" .profile_ref) -}}
+{{- end -}}
+{{- $shellEnv := mustFromJson $shellEnvJSON -}}
+$managed = [ordered]@{
+{{- range $key := keys $shellEnv | sortAlpha }}
+{{- $value := index $shellEnv $key -}}
+{{- if not (regexMatch "^[A-Za-z_][A-Za-z0-9_]*$" $key) -}}
+{{-   fail (printf "invalid shell_env_json key: %s" $key) -}}
+{{- end -}}
+{{- if not (kindIs "string" $value) -}}
+{{-   fail (printf "shell_env_json value for %s must be a string" $key) -}}
+{{- end }}
+    '{{ $key }}' = '{{ $value | replace "'" "''" }}'
+{{- end }}
+}
+
+$stateDir = Join-Path $env:USERPROFILE ".config\dotfiles"
+$manifestPath = Join-Path $stateDir "windows-shell-env.json"
+$previousKeys = @()
+if (Test-Path $manifestPath) {
+    try {
+        $previousKeys = @(Get-Content -Raw $manifestPath | ConvertFrom-Json)
+    } catch {
+        $previousKeys = @()
+    }
+}
+
+$currentKeys = @($managed.Keys)
+$changed = $false
+
+foreach ($key in $previousKeys) {
+    if ($currentKeys -notcontains $key) {
+        if ($null -ne [System.Environment]::GetEnvironmentVariable($key, 'User')) {
+            [System.Environment]::SetEnvironmentVariable($key, $null, 'User')
+            $changed = $true
+        }
+    }
+}
+
+foreach ($entry in $managed.GetEnumerator()) {
+    $current = [System.Environment]::GetEnvironmentVariable($entry.Key, 'User')
+    if ($current -ne $entry.Value) {
+        [System.Environment]::SetEnvironmentVariable($entry.Key, $entry.Value, 'User')
+        $changed = $true
+    }
+}
+
+New-Item -ItemType Directory -Path $stateDir -Force | Out-Null
+$manifestJson = if ($currentKeys.Count -gt 0) {
+    $currentKeys | ConvertTo-Json
+} else {
+    '[]'
+}
+Set-Content -Path $manifestPath -Value $manifestJson -Encoding UTF8 -NoNewline
+
+if ($changed) {
+    if (-not ('DotfilesEnvironmentChange' -as [type])) {
+        Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+
+public static class DotfilesEnvironmentChange {
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    public static extern IntPtr SendMessageTimeout(
+        IntPtr hWnd,
+        uint Msg,
+        UIntPtr wParam,
+        string lParam,
+        uint fuFlags,
+        uint uTimeout,
+        out UIntPtr lpdwResult);
+}
+'@
+    }
+    $result = [UIntPtr]::Zero
+    [DotfilesEnvironmentChange]::SendMessageTimeout(
+        [IntPtr]0xffff,
+        0x001A,
+        [UIntPtr]::Zero,
+        "Environment",
+        0x0002,
+        5000,
+        [ref]$result) | Out-Null
+}
+{{ end -}}

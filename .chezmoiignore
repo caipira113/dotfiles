@@ -5,6 +5,7 @@ README.md
 
 {{ if eq .chezmoi.os "windows" }}
 .zshrc
+.config/shell
 .config/1Password
 .config/distrobox
 .local/bin/dev
