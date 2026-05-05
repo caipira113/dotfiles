@@ -65,6 +65,7 @@ cmd_install() {
   distrobox create "${flags[@]}"
   distrobox enter "${enter_flags[@]}" -- distrobox-export --app claude-desktop-ime
   distrobox enter "${enter_flags[@]}" -- distrobox-export --app codex
+  distrobox enter "${enter_flags[@]}" -- sh -lc 'if [ -f /usr/share/applications/opencode.desktop ]; then distrobox-export --app opencode; elif [ -f /usr/share/applications/opencode-desktop.desktop ]; then distrobox-export --app opencode-desktop; fi'
   distrobox enter "${enter_flags[@]}" -- distrobox-export --app code
   distrobox enter "${enter_flags[@]}" -- sh -lc 'if [ -f /usr/share/applications/google-chrome.desktop ]; then distrobox-export --app google-chrome; fi'
   distrobox enter "${enter_flags[@]}" -- distrobox-export --app zen

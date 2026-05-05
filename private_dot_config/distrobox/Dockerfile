@@ -152,6 +152,18 @@ RUN case "$TARGETARCH" in \
     rm -f /tmp/codex.deb && \
     rm -rf /var/lib/apt/lists/*
 
+# OpenCode Desktop (latest release, amd64 only)
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+      OPENCODE_DEB_URL=$(curl -fsSL https://api.github.com/repos/anomalyco/opencode/releases/latest \
+        | grep -oP '"browser_download_url":\s*"\K[^"]*opencode-desktop-linux-amd64\.deb' | head -1) && \
+      test -n "${OPENCODE_DEB_URL}" && \
+      curl -fsSL -o /tmp/opencode-desktop.deb "${OPENCODE_DEB_URL}" && \
+      apt-get update && \
+      apt-get install -y --no-install-recommends /tmp/opencode-desktop.deb && \
+      rm -f /tmp/opencode-desktop.deb && \
+      rm -rf /var/lib/apt/lists/*; \
+    fi
+
 # Claude Desktop IME wrapper (IBus environment variables) + desktop entry
 RUN printf '#!/bin/bash\nexec env IBUS_USE_PORTAL=1 GTK_IM_MODULE=ibus QT_IM_MODULE=ibus XMODIFIERS=@im=ibus claude-desktop "$@"\n' \
       > /usr/local/bin/claude-desktop-ime && \
