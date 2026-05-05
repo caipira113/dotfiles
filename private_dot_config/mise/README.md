@@ -6,7 +6,7 @@ All dev tools managed by [mise](https://mise.jdx.dev/). Available both on host a
 
 **Languages** — go, rust, python 3.12, node (lts), bun, deno, java (zulu-21)
 
-**CLI** — bat, btop, eza, fd, fzf, hexyl, oha, ripgrep, croc, rclone, tmux, upx, uv, yt-dlp, lazygit
+**CLI** — bat, blacksmith, btop, eza, fd, fzf, hexyl, oha, ripgrep, croc, rclone, tmux, upx, uv, yt-dlp, lazygit
 
 **Infra** — aws, gcloud, kubectl, helm
 

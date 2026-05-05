@@ -12,6 +12,7 @@ aws = { version = "latest", symlink_bins = "true" }
 bat = "latest"
 {{- end }}
 {{ if ne .chezmoi.os "windows" -}}
+"http:blacksmith" = { version = "latest", url = 'https://clireleases.blacksmith.sh/cli/{{ "{{" }}version{{ "}}" }}/{{ "{{" }}os(macos="darwin"){{ "}}" }}/{{ "{{" }}arch(x64="amd64"){{ "}}" }}/blacksmith', bin = "blacksmith" }
 btop = "latest" {{/* TODO: no Windows ARM64 binary available */}}
 {{- end }}
 {{ if and (eq .chezmoi.os "windows") (eq .chezmoi.arch "arm64") -}}
