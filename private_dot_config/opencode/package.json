@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@khalilgharbaoui/opencode-claude-code-plugin": "^0.2.2",
-    "@morphllm/opencode-morph-plugin": "^2.0.9",
-    "@opencode-ai/plugin": "1.14.33"
-  }
-}
